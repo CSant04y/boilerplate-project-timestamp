@@ -24,6 +24,29 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+app.get("/api", (req, res) => {
+  const nowDate = new Date();
+  res.json({ "unix": nowDate.getTime(), "utc": nowDate.toUTCString() })
+});
+
+// Accepts valid ISO 8601 format or Unix TimeStamps
+app.get("/api/:date?", function(req, res) {
+  const dateString = req.params.date;
+
+  if (/\d{5,}/.test(dateString)) {
+    const parsedDate = parseInt(dateString);
+
+    res.json({ "unix": parsedDate, "utc": new Date(parsedDate).toUTCString() });
+  } else {
+    const dateObj = new Date(dateString);
+
+    if (dateObj.toString() === "Invalid Date") {
+      res.json({ "error": "Invalid Date" });
+    }
+    res.json({ "unix": dateObj.valueOf(), "utc": dateObj.toUTCString() });
+  }
+
+});
 
 
 // listen for requests :)
